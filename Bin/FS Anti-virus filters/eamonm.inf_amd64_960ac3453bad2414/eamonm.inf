@@ -1,0 +1,91 @@
+[Version]
+Signature   = "$Windows NT$"
+Class       = "AntiVirus"
+ClassGuid   = {b1d1a169-c54f-4379-81db-bee7d88d7454} 
+Provider    = %Eset%
+DriverVer = 07/22/2022,10.28.27.0
+CatalogFile = eamonm.cat
+
+[DestinationDirs]
+DefaultDestDir          = 12
+eamonm.DriverFiles     = 12            ;%windir%\system32\drivers
+eamonm.UserFiles       = 10,FltMgr     ;%windir%\FltMgr
+
+;;
+;; Default install sections
+;;
+
+[DefaultInstall.NTamd64]
+OptionDesc          = %ServiceDescription%
+CopyFiles           = eamonm.DriverFiles
+
+[DefaultInstall.NTamd64.Services]
+AddService          = %ServiceName%,,eamonm.Service
+
+;;
+;; Default uninstall sections
+;;
+
+[DefaultUninstall.NTamd64]
+DelFiles            = eamonm.DriverFiles
+
+
+
+[DefaultUninstall.NTamd64.Services]
+DelService = eamonm,0x200      ;Ensure service is stopped before deleting
+
+;
+; Services Section
+;
+
+[eamonm.Service]
+DisplayName      = %ServiceName%
+Description      = %ServiceDescription%
+ServiceBinary    = %12%\eamonm.sys        ;%windir%\system32\drivers\
+Dependencies     = "FltMgr"
+ServiceType      = 2                            ;SERVICE_FILE_SYSTEM_DRIVER
+StartType        = 1                            ;SERVICE_SYSTEM_START
+ErrorControl     = 1                            ;SERVICE_ERROR_NORMAL
+LoadOrderGroup   = "FSFilter Anti-Virus"
+AddReg           = eamonm.AddRegistry
+
+;
+; Registry Modifications
+;
+
+[eamonm.AddRegistry]
+HKR,"Instances","DefaultInstance",0x00000000,%DefaultInstance%
+HKR,"Instances\"%Instance1.Name%,"Altitude",0x00000000,%Instance1.Altitude%
+HKR,"Instances\"%Instance1.Name%,"Flags",0x00010001,%Instance1.Flags%
+HKR,,"SupportedFeatures",0x00010001,0xB    ;Ensure to add same value to uPCU metadata
+
+;
+; Copy Files
+;
+
+[eamonm.DriverFiles]
+eamonm.sys
+
+[SourceDisksNames]
+1 = %DiskId1%,,,
+
+[SourceDisksFiles]
+eamonm.sys=1
+
+;;
+;; String Section
+;;
+
+[Strings]
+Eset                    = "ESET, spol. s r.o."
+ServiceDescription      = "ESET file on-access scanner"
+ServiceName             = "eamonm"
+DriverName              = "eamonm"
+DiskId1                 = "ESET on-access scanner driver disk"
+
+;Instances specific information.
+DefaultInstance         = "AmonMinifilter Instance"
+Instance1.Name          = "AmonMinifilter Instance"
+Instance1.Altitude      = "328700"
+Instance1.Flags         = 0x0          ; Allow all attachments
+
