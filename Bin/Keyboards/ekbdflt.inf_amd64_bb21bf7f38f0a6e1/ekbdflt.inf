@@ -1,0 +1,72 @@
+; ekbdflt.inf
+; OPP kbd filter
+; (c) Copyright 2015 ESET
+
+[Version]
+Signature   = "$Windows NT$"
+Class       = Keyboard
+ClassGuid   = {4D36E96B-E325-11CE-BFC1-08002BE10318}
+Provider    = %Eset%
+CatalogFile = ekbdflt.cat
+DriverVer = 07/22/2022,10.28.27.0
+
+[DestinationDirs]
+DefaultDestDir      = 12
+EKBDFLT.DriverFiles = 12           ;%windir%\system32\drivers
+
+;;
+;; Default install sections
+;;
+
+[DefaultInstall.NTamd64]
+OptionDesc          = %ServiceDesc%
+CopyFiles           = EKBDFLT.DriverFiles
+
+[DefaultInstall.NTamd64.Services]
+AddService          = %ServiceName%,,EKBDFLT.Service
+
+;;
+;; Default uninstall sections
+;;
+
+[DefaultUninstall.NTamd64]
+DelFiles   = EKBDFLT.DriverFiles
+
+[DefaultUninstall.NTamd64.Services]
+DelService = %ServiceName%,0x200
+
+;
+; Services Section
+;
+
+[EKBDFLT.Service]
+DisplayName    = %ServiceName%
+Description    = %ServiceDesc%
+ServiceBinary  = %12%\ekbdflt.sys
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 2                  ; SERVICE_AUTO_START
+ErrorControl   = 0                  ; SERVICE_ERROR_IGNORE
+LoadOrderGroup = Keyboard Class
+
+;
+; Copy Files
+;
+
+[SourceDisksNames]
+1 = %DiskId%,,,
+
+[SourceDisksFiles]
+ekbdflt.sys = 1,,
+
+[EKBDFLT.DriverFiles]
+ekbdflt.sys
+
+;;
+;; String Section
+;;
+
+[Strings]
+Eset        = "ESET, spol. s r.o."
+ServiceDesc = "ESET OPP Keyboard Filter"
+ServiceName = "ekbdflt"
+DiskId      = "ESET OPP Keyboard Filter Installation Disk (Keyboard)"

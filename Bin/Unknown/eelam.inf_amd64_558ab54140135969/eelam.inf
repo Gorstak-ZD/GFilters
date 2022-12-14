@@ -1,0 +1,83 @@
+[Version]
+Signature   = "$Windows NT$"
+Class       = SecurityFilter
+ClassGuid   = {2B419FF0-4473-4936-A872-7FC6024310C4}
+Provider    = %Eset%
+CatalogFile = eelam.cat
+DriverVer = 05/27/2022,10.0.17.0
+
+[DestinationDirs]
+DefaultDestDir         = 12
+eelam.DriverFiles      = 12            ;%SystemRoot%\system32\drivers
+eelam.BackupFiles      = 10,ELAMBKUP   ;%SystemRoot%\ELAMBKUP
+
+;;
+;; Default install sections
+;;
+
+[DefaultInstall]
+OptionDesc          = %ServiceDescription%
+CopyFiles           = eelam.DriverFiles
+CopyFiles           = eelam.BackupFiles
+
+[DefaultInstall.Services]
+AddService          = %ServiceName%,,eelam.Service
+
+;;
+;; Default uninstall sections
+;;
+
+[DefaultUninstall]
+DelFiles            = eelam.DriverFiles
+DelFiles            = eelam.BackupFiles
+
+[DefaultUninstall.Services]
+DelService = %ServiceName%,0x200      ;Ensure service is stopped before deleting
+
+;
+; Services Section
+;
+
+[eelam.Service]
+DisplayName      = %ServiceName%
+Description      = %ServiceDescription%
+ServiceBinary    = %12%\eelam.sys        ;%windir%\system32\drivers\
+ServiceType      = 1       ; SERVICE_KERNEL_DRIVER
+StartType        = 0       ; SERVICE_BOOT_START
+ErrorControl     = 3       ; SERVICE_ERROR_CRITICAL
+LoadOrderGroup   = "Early-Launch"
+
+;
+; Copy Files
+;
+
+[eelam.DriverFiles]
+eelam.sys
+
+[eelam.BackupFiles]
+eelam.sys
+
+[SourceDisksNames]
+1 = %DiskId1%,,,
+
+[SourceDisksFiles]
+eelam.sys=1
+
+;
+; Signature Attributes
+;
+[SignatureAttributes]
+eelam.sys=SignatureAttributes.Elam
+
+[SignatureAttributes.Elam]
+Elam=true
+
+;;
+;; String Section
+;;
+
+[Strings]
+Eset                    = "ESET, spol. s r.o."
+ServiceDescription      = "ESET ELAM driver"
+ServiceName             = "eelam"
+DiskId1                 = "ESET ELAM driver disk"

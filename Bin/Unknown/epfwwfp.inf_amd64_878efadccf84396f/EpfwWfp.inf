@@ -1,0 +1,72 @@
+[Version]
+Signature   = "$Windows NT$"
+Class       = SecurityFilter
+ClassGuid   = {2B419FF0-4473-4936-A872-7FC6024310C4}
+Provider    = %Eset%
+;DriverPackageType=ClassFilter
+CatalogFile = epfwwfp.cat
+DriverVer = 07/22/2022,10.28.27.0
+
+[DestinationDirs]
+DefaultDestDir          = 12
+EPFWWFP.DriverFiles         = 12           ;%windir%\system32\drivers
+
+;;
+;; Default install sections
+;;
+
+[DefaultInstall.NTx86]
+OptionDesc          = %ServiceDesc%
+CopyFiles           = EPFWWFP.DriverFiles
+
+[DefaultInstall.NTx86.Services]
+AddService          = %ServiceName%,,EPFWWFP.Service
+
+;;
+;; Default uninstall sections
+;;
+
+[DefaultUninstall.NTx86]
+DelFiles   = EPFWWFP.DriverFiles
+
+[DefaultUninstall.NTx86.Services]
+DelService = %ServiceName%,0x200      ;Ensure service is stopped before deleting
+
+;
+; Services Section
+;
+
+[EPFWWFP.Service]
+DisplayName      = %ServiceName%
+Description      = %ServiceDesc%
+ServiceBinary    = %12%\epfwwfp.sys     ;%windir%\system32\drivers\
+ServiceType      = 1                    ;SERVICE_KERNEL_DRIVER
+StartType        = 1                    ;SERVICE_SYSTEM_START
+ErrorControl     = 0                    ;SERVICE_ERROR_IGNORE
+LoadOrderGroup   = "NDIS"
+Dependencies     = "Tcpip"
+
+
+;
+; Copy Files
+;
+
+[SourceDisksNames]
+1=%DiskDescription%,"",,
+
+[SourceDisksFiles]
+epfwwfp.sys=1
+
+
+[EPFWWFP.DriverFiles]
+epfwwfp.sys
+
+;;
+;; String Section
+;;
+
+[Strings]
+Eset                = "ESET, spol. s r.o."
+ServiceDesc         = "EPFW Filter Driver"
+ServiceName         = "epfwwfp"
+DiskDescription     = "ESET NOD32 Antivirus Disk"

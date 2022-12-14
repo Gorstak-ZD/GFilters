@@ -1,0 +1,87 @@
+[version]
+Signature   = "$Windows NT$"
+Class       = NetService
+ClassGUID   = {4D36E974-E325-11CE-BFC1-08002BE10318}
+Provider    = %Eset%
+CatalogFile = EpfwLwf.cat
+DriverVer = 07/22/2022,10.28.27.0
+
+[Manufacturer]
+%Eset%=ESET,NTx86,NTamd64
+
+[ESET.NTx86]
+%EpfwLWF_Desc%=Install, ESET_EpfwLWF
+
+[ESET.NTamd64]
+%EpfwLWF_Desc%=Install, ESET_EpfwLWF
+
+;-------------------------------------------------------------------------
+; Installation Section
+;-------------------------------------------------------------------------
+[Install]
+AddReg=Inst_Ndi
+Characteristics=0x40000
+NetCfgInstanceId="{F7A0C547-B619-442b-8E5C-FD7D0E1B069D}"
+Copyfiles = EpfwLWF.copyfiles.sys
+
+[SourceDisksNames]
+1=%EpfwLWF_Desc%,"",,
+
+[SourceDisksFiles]
+EpfwLWF.sys=1
+
+[DestinationDirs]
+DefaultDestDir=12
+EpfwLWF.copyfiles.sys=12
+
+[EpfwLWF.copyfiles.sys]
+EpfwLWF.sys,,,2
+
+
+;-------------------------------------------------------------------------
+; Ndi installation support
+;-------------------------------------------------------------------------
+[Inst_Ndi]
+HKR, Ndi,Service,,"EpfwLWF"
+HKR, Ndi,CoServices,0x00010000,"EpfwLWF"
+HKR, Ndi,HelpText,,%EpfwLWF_HelpText%
+HKR, Ndi,FilterClass,, compression
+HKR, Ndi,FilterType,0x00010001,0x00000002
+HKR, Ndi\Interfaces,UpperRange,,"noupper"
+HKR, Ndi\Interfaces,LowerRange,,"nolower"
+HKR, Ndi\Interfaces, FilterMediaTypes,,"ethernet, ppip"
+HKR, Ndi,FilterRunType, 0x00010001, 1 ;this filter must run before any protocol can bind to the below miniport 
+
+;-------------------------------------------------------------------------
+; Service installation support
+;-------------------------------------------------------------------------
+[Install.Services]
+AddService=EpfwLWF,,EpfwLWF_Service_Inst
+
+[EpfwLWF_Service_Inst]
+DisplayName     = %EpfwLWF_Desc%
+ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
+StartType       = 1 ;SERVICE_SYSTEM_START
+ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
+ServiceBinary   = %12%\EpfwLWF.sys
+LoadOrderGroup  = NDIS
+Description     = %EpfwLWF_Desc%
+AddReg          = Common.Params.reg
+
+[Install.Remove.Services]
+DelService=EpfwLWF,0x200
+
+[Common.Params.reg]
+
+HKR, FilterDriverParams\DriverParam, ParamDesc, , "Driverparam for lwf"
+HKR, FilterDriverParams\DriverParam, default,   , "5"
+HKR, FilterDriverParams\DriverParam, type,      , "int"
+
+HKR, FilterAdapterParams\AdapterParam, ParamDesc, , "Adapterparam for lwf"
+HKR, FilterAdapterParams\AdapterParam, default,   , "10"
+HKR, FilterAdapterParams\AdapterParam, type,      , "int"
+
+[Strings]
+Eset = "ESET, spol. s r.o."
+EpfwLWF_Desc = "ESET Firewall"
+EpfwLWF_HelpText = "ESET NDIS 6 LightWeight Filter. This component provides network filtering in ESET Security products."
