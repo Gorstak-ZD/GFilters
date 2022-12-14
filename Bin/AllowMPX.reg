@@ -1,6 +1,0 @@
-Windows Registry Editor Version 5.00
-
-; Core isolation off (for mpx driver to run)
-
-[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity]
-"Enabled"=dword:00000000
